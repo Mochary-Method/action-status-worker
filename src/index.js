@@ -47,9 +47,6 @@ function formatHTML(template, data) {
 
 // OpenAI API integration
 async function callOpenAI(systemMessage, userText, jsonSchema, cfToken, openaiToken) {
-  // Extract the actual schema from the wrapper object
-  const actualSchema = jsonSchema.json_schema.schema;
-  
   const payload = {
     model: "gpt-4o-mini",
     messages: [
@@ -72,7 +69,7 @@ async function callOpenAI(systemMessage, userText, jsonSchema, cfToken, openaiTo
         ]
       }
     ],
-    response_format: { type: "json_schema", schema: actualSchema }
+    response_format: jsonSchema
   };
 
   try {
@@ -82,7 +79,6 @@ async function callOpenAI(systemMessage, userText, jsonSchema, cfToken, openaiTo
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'cf-aig-authorization': `Bearer ${cfToken}`,
         'Authorization': `Bearer ${openaiToken}`
       },
       body: JSON.stringify(payload)
