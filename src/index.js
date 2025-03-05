@@ -49,7 +49,6 @@ function formatHTML(template, data) {
 async function callOpenAI(systemMessage, userText, jsonSchema, apiKey) {
   const payload = {
     model: "gpt-4o-mini",
-    response_format: { type: "json_schema", schema: jsonSchema },
     messages: [
       {
         role: "system",
@@ -59,11 +58,12 @@ async function callOpenAI(systemMessage, userText, jsonSchema, apiKey) {
         role: "user",
         content: userText
       }
-    ]
+    ],
+    response_format: { type: "json_schema", schema: jsonSchema }
   };
 
   try {
-    const response = await fetch('https://gateway.ai.cloudflare.com/v1/openai', {
+    const response = await fetch('https://gateway.ai.cloudflare.com/v1/9fda6217ed24326e5ad7e9c2c772a622/action-status/openai', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -73,14 +73,14 @@ async function callOpenAI(systemMessage, userText, jsonSchema, apiKey) {
     });
 
     if (!response.ok) {
-      console.error('OpenAI API error:', await response.text());
-      throw new Error(`OpenAI API call failed with status: ${response.status}`);
+      console.error('AI Gateway API error:', await response.text());
+      throw new Error(`AI Gateway API call failed with status: ${response.status}`);
     }
 
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error('Error calling OpenAI:', error);
+    console.error('Error calling AI Gateway:', error);
     throw new Error('Failed to process request with AI service');
   }
 }
@@ -171,12 +171,12 @@ export default {
         const jsonSchema = JSON_SCHEMAS[body.status];
         const template = HTML_TEMPLATES[body.status];
 
-        // Call OpenAI API
+        // Call OpenAI API with CF_TOKEN
         const aiResponse = await callOpenAI(
           systemMessage,
           body.text,
           jsonSchema,
-          env.OPENAI_API_KEY
+          env.CF_TOKEN  // Using CF_TOKEN here instead of OPENAI_API_KEY
         );
 
         // Format the HTML using the template and AI response
