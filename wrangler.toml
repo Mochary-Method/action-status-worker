@@ -3,10 +3,18 @@ name = "action-status-worker"
 main = "index.js"
 compatibility_date = "2024-01-01"
 
-# Environment variables
+# Remove the hardcoded AUTH_TOKEN values entirely
+# They should only exist as secrets
+
 [vars]
-# Development environment variables
-AUTH_TOKEN = "your_dev_auth_token"  # Replace in production
+# Add any non-secret environment variables here
+
+# Optional: Add environment-specific configurations
+[env.production]
+# Production-specific settings
+
+[env.development]
+# Development-specific settings
 
 # Production secrets (use `wrangler secret put` command)
 # Run these commands to set up your secrets:
