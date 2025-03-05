@@ -46,7 +46,7 @@ function formatHTML(template, data) {
 }
 
 // OpenAI API integration
-async function callOpenAI(systemMessage, userText, jsonSchema, apiKey) {
+async function callOpenAI(systemMessage, userText, jsonSchema, cfToken, openaiToken) {
   const payload = {
     model: "gpt-4o-mini",
     messages: [
@@ -67,7 +67,8 @@ async function callOpenAI(systemMessage, userText, jsonSchema, apiKey) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`
+        'cf-aig-authorization': `Bearer ${cfToken}`,
+        'Authorization': `Bearer ${openaiToken}`
       },
       body: JSON.stringify(payload)
     });
@@ -171,12 +172,13 @@ export default {
         const jsonSchema = JSON_SCHEMAS[body.status];
         const template = HTML_TEMPLATES[body.status];
 
-        // Call OpenAI API with CF_TOKEN
+        // Call OpenAI API with both tokens
         const aiResponse = await callOpenAI(
           systemMessage,
           body.text,
           jsonSchema,
-          env.CF_TOKEN  // Using CF_TOKEN here instead of OPENAI_API_KEY
+          env.CF_TOKEN,
+          env.OPENAI_API_KEY
         );
 
         // Format the HTML using the template and AI response
