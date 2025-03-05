@@ -67,7 +67,6 @@ async function callOpenAI(systemMessage, userText, jsonSchema, cfToken, openaiTo
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'cf-aig-authorization': `Bearer ${cfToken}`,
         'Authorization': `Bearer ${openaiToken}`
       },
       body: JSON.stringify(payload)
