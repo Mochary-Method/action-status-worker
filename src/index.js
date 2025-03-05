@@ -63,7 +63,7 @@ async function callOpenAI(systemMessage, userText, jsonSchema, cfToken, openaiTo
   };
 
   try {
-    const response = await fetch('https://gateway.ai.cloudflare.com/v1/9fda6217ed24326e5ad7e9c2c772a622/action-status/openai', {
+    const response = await fetch('https://gateway.ai.cloudflare.com/v1/9fda6217ed24326e5ad7e9c2c772a622/action-status/openai/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -78,7 +78,8 @@ async function callOpenAI(systemMessage, userText, jsonSchema, cfToken, openaiTo
     }
 
     const data = await response.json();
-    return data;
+    // Extract the message content from the chat completion response
+    return data.choices[0].message.content ? JSON.parse(data.choices[0].message.content) : data;
   } catch (error) {
     console.error('Error calling AI Gateway:', error);
     throw new Error('Failed to process request with AI service');
