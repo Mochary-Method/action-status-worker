@@ -1,0 +1,23 @@
+{
+    "type": "json_schema",
+    "json_schema": {
+        "name": "my_schema",
+        "strict": true,
+        "schema": {
+            "type": "object",
+            "properties": {
+                "key_learnings": {
+                    "type": "array",
+                    "description": "An array containing only the user's responses that answer the question 'Any key learnings or next actions?'. The original question should not be included in the output.",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            },
+            "required": [
+                "key_learnings"
+            ],
+            "additionalProperties": false
+        }
+    }
+}

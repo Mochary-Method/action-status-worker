@@ -1,0 +1,96 @@
+# Worker configuration
+name = "action-status-worker"
+main = "index.js"
+compatibility_date = "2024-01-01"
+
+# Environment variables
+[vars]
+# Development environment variables
+AUTH_TOKEN = "your_dev_auth_token"  # Replace in production
+
+# Production secrets (use `wrangler secret put` command)
+# Run these commands to set up your secrets:
+# wrangler secret put OPENAI_API_KEY
+# wrangler secret put AUTH_TOKEN
+
+# Routes
+# Uncomment and modify if you want to use a custom route
+# routes = [
+#   { pattern = "api.yourdomain.com/action-status", custom_domain = true }
+# ]
+
+#########################################
+# Deployment & Testing Instructions
+#########################################
+
+# === Deployment Steps ===
+# 1. Install Wrangler if you haven't:
+#    npm install -g wrangler
+#
+# 2. Login to Cloudflare:
+#    wrangler login
+#
+# 3. Set up your secrets:
+#    wrangler secret put OPENAI_API_KEY
+#    wrangler secret put AUTH_TOKEN
+#
+# 4. Deploy your worker:
+#    wrangler publish
+#
+# === Testing the API ===
+# 
+# 1. Using cURL:
+#    ```bash
+#    curl -X POST https://<your-worker>.<your-subdomain>.workers.dev \
+#      -H "Content-Type: application/json" \
+#      -H "Authorization: your_auth_token" \
+#      -d '{
+#        "status": "done",
+#        "text": "Completed the API implementation"
+#      }'
+#    ```
+#
+# 2. Using Postman:
+#    - Method: POST
+#    - URL: https://<your-worker>.<your-subdomain>.workers.dev
+#    - Headers:
+#      * Content-Type: application/json
+#      * Authorization: your_auth_token
+#    - Body (raw JSON):
+#      {
+#        "status": "done",
+#        "text": "Completed the API implementation"
+#      }
+#
+# === Example Requests ===
+#
+# 1. Completed task:
+#    {
+#      "status": "done",
+#      "text": "Implemented the new feature"
+#    }
+#
+# 2. Blocked task:
+#    {
+#      "status": "not_done",
+#      "text": "Unable to complete the database migration"
+#    }
+#
+# 3. Canceled task:
+#    {
+#      "status": "canceled",
+#      "text": "Project requirements changed"
+#    }
+#
+# === Expected Responses ===
+#
+# Success (200):
+#    {
+#      "html": "<formatted HTML with AI response>"
+#    }
+#
+# Error Cases:
+# - 400: Invalid request (bad status or text)
+# - 401: Missing or invalid Authorization header
+# - 405: Method not POST
+# - 500: Internal server error (AI service failure) 
