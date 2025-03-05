@@ -47,39 +47,79 @@ function formatHTML(template, data) {
 
 // OpenAI API integration
 async function callOpenAI(systemMessage, userText, jsonSchema, cfToken, openaiToken) {
+  // Extract the actual schema from the wrapper object
+  const actualSchema = jsonSchema.json_schema.schema;
+  
   const payload = {
     model: "gpt-4o-mini",
     messages: [
       {
         role: "system",
-        content: systemMessage
+        content: [
+          {
+            type: "text",
+            text: systemMessage
+          }
+        ]
       },
       {
         role: "user",
-        content: userText
+        content: [
+          {
+            type: "text",
+            text: userText
+          }
+        ]
       }
     ],
-    response_format: { type: "json_schema", schema: jsonSchema }
+    response_format: { type: "json_schema", schema: actualSchema }
   };
 
   try {
+    console.log('Sending payload to AI Gateway:', JSON.stringify(payload, null, 2));
+    
     const response = await fetch('https://gateway.ai.cloudflare.com/v1/9fda6217ed24326e5ad7e9c2c772a622/action-status/openai/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'cf-aig-authorization': `Bearer ${cfToken}`,
         'Authorization': `Bearer ${openaiToken}`
       },
       body: JSON.stringify(payload)
     });
 
+    const responseText = await response.text();
+    console.log('Raw AI Gateway response:', responseText);
+
     if (!response.ok) {
-      console.error('AI Gateway API error:', await response.text());
+      console.error('AI Gateway API error:', responseText);
       throw new Error(`AI Gateway API call failed with status: ${response.status}`);
     }
 
-    const data = await response.json();
-    // Extract the message content from the chat completion response
-    return data.choices[0].message.content ? JSON.parse(data.choices[0].message.content) : data;
+    try {
+      const data = JSON.parse(responseText);
+      
+      // Check if we have a valid response structure
+      if (data.choices && data.choices[0] && data.choices[0].message) {
+        const messageContent = data.choices[0].message.content;
+        
+        // Try to parse the content as JSON if it's a string
+        if (typeof messageContent === 'string') {
+          try {
+            return JSON.parse(messageContent);
+          } catch (parseError) {
+            console.error('Error parsing message content as JSON:', parseError);
+            return messageContent;
+          }
+        }
+        return messageContent;
+      }
+      
+      return data;
+    } catch (parseError) {
+      console.error('Error parsing response JSON:', parseError);
+      throw new Error('Invalid JSON response from AI Gateway');
+    }
   } catch (error) {
     console.error('Error calling AI Gateway:', error);
     throw new Error('Failed to process request with AI service');
