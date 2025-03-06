@@ -90,7 +90,7 @@ const JSON_SCHEMAS = {
 const HTML_TEMPLATES = {
   done: `<ul><li>Any key learnings or next actions?<ul>{{#each key_learnings}}<li>{{this}}</li>{{/each}}</ul></li></ul>`,
   not_done: `<ul><li>What blocked you from doing this action?<ul>{{#each blocked}}<li>{{this}}</li>{{/each}}</ul><li>What will you do to ensure you don't get blocked again?<ul>{{#each do_next}}<li>{{this}}</li>{{/each}}</ul></ul>`,
-  canceled: `<ul><li>Why not?<ul>{{#each why_not}}<li>{{this}}</li>{{/each}}</ul></ul>`
+  canceled: `<ul><li>Why:<ul>{{#each why_not}}<li>{{this}}</li>{{/each}}</ul></ul>`
 };
 
 // HTML formatting function
