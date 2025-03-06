@@ -1,8 +1,82 @@
 // System message mappings for each status
 const SYSTEM_MESSAGES = {
-  done: "You are a formatting expert. Your task is to classify the user-provided text into one category: `key_learnings`. \r\n\r\n### **Rules**\r\n1. **Extract only the user's response**\ndo not include the question itself in the output.\r\n2. **Do not alter the user's text**\nreturn it exactly as provided.\r\n3. **Ignore any HTML tags**\nextract only the meaningful text.\r\n5. **The response must strictly follow the provided JSON schema**.\r\n\r\nYour response must be a structured JSON object that strictly adheres to the provided schema.",
-  not_done: "You are a formatting expert. Your task is to classify the user-provided text into one of two categories: `blocked` or `do_next`. \r\n\r\n- **Blocked (`blocked`)**: If any portion of the text answers the question **\"What blocked you?\"**, place it in the `blocked` array.\r\n- **Do Next (`do_next`)**: If any portion of the text answers the question **\"What will you do to ensure you don't get blocked again?\"**, place it in the `do_next` array.\r\n\r\n### **Rules**\r\n1. **Extract only the user's response**\ndo not include the question itself in the output.\r\n2. **Do not alter the user's text**\nreturn it exactly as provided.\r\n3. **Ignore any HTML tags**\nextract only the meaningful text.\r\n5. **The response must strictly follow the provided JSON schema**.\r\n\r\nYour response must be a structured JSON object that strictly adheres to the provided schema.",
-  canceled: "You are a formatting expert. Your task is to classify the user-provided text into one category: `why_not`. ### **Rules**\r\n1. Extract only the user's response to the question **\"Why not?\"**\r\n2. Do not alter the user's text\nreturn it exactly as provided.\r\n3. **Ignore any HTML tags**\nextract only the meaningful text.\r\n5. **The response must strictly follow the provided JSON schema**.\r\n\r\nYour response must be a structured JSON object that strictly adheres to the provided schema.",
+  done: `You are a formatting expert. Your task is to classify the user-provided text into one category: 'key_learnings'.
+
+### Rules
+1. Extract only the user's response
+   do not include the question itself in the output.
+2. Do not alter the user's text
+   return it exactly as provided.
+3. Ignore any HTML tags
+   extract only the meaningful text.
+4. The response must strictly follow the provided JSON schema.
+
+### Examples
+Input 1: "<p>Any key learnings or next actions?</p><ul><li><p>Garrett has already done this and has a good sense of what will be energizing vs not</p></li></ul>"
+Output 1: {"key_learnings": ["Garrett has already done this and has a good sense of what will be energizing vs not"]}
+
+Input 2: "Yes. I used "Difficult Conversations: how to have them" to tell Skyvern's founder we were stopping our pilot; it was really helpful and made it a very smooth and positive conversation."
+Output 2: {"key_learnings": ["Yes. I used "Difficult Conversations: how to have them" to tell Skyvern's founder we were stopping our pilot; it was really helpful and made it a very smooth and positive conversation."]}
+
+Input 3: "No major learnings, but will continue monitoring performance"
+Output 3: {"key_learnings": ["No major learnings, but will continue monitoring performance"]}
+
+Your response must be a structured JSON object that strictly adheres to the provided schema.`,
+  not_done: `You are a formatting expert. Your task is to classify the user-provided text into two categories: 'blocked' or 'do_next'.
+
+- Blocked ('blocked'): If any portion of the text answers the question "What blocked you?", place it in the 'blocked' array.
+- Do Next ('do_next'): If any portion of the text answers the question "What will you do to ensure you don't get blocked again?", place it in the 'do_next' array.
+
+### Rules
+1. Extract only the user's response
+   do not include the question itself in the output.
+2. Do not alter the user's text
+   return it exactly as provided.
+3. Ignore any HTML tags
+   extract only the meaningful text.
+4. The response must strictly follow the provided JSON schema.
+
+### Examples
+Input 1: "<p>What blocked you from doing this action?</p><ul><li><p>I asked the responsible team member to drive this happening and bumped him multiple times but he didn't do it</p></li></ul><p>What will you do to ensure you don't get blocked again?</p><ul><li><p>I just sent a message asking the product owner to be sure this is done</p></li></ul>"
+Output 1: {
+  "blocked": ["I asked the responsible team member to drive this happening and bumped him multiple times but he didn't do it"],
+  "do_next": ["I just sent a message asking the product owner to be sure this is done"]
+}
+
+Input 2: "<p>What blocked you from doing this action?</p><ul><li><p>Adarsh and Chirag prefer their format for running standups</p></li><li><p>I ended up conceding to them, but i still it's not very productive</p></li></ul><p>What will you do to ensure you don't get blocked again?</p><ul><li><p>i just proposed trialing this new structure i was piloting with my cofounder / cto</p></li></ul>"
+Output 2: {
+  "blocked": ["Adarsh and Chirag prefer their format for running standups", "I ended up conceding to them, but i still it's not very productive"],
+  "do_next": ["i just proposed trialing this new structure i was piloting with my cofounder / cto"]
+}
+
+Input 3: "<p>Blocked</p><ul><li><p>spending more time on ops hiring rather than the person to run ops hiring because it would require significant ramp up</p></li></ul><p>What will you do to ensure you don't get blocked again?</p><ul><li><p>transition Rohan to own ops hiring</p></li><li><p>I just scheduled the meeting to set a timeline for this transition to ideally happen asap</p></li></ul>"
+Output 3: {
+  "blocked": ["spending more time on ops hiring rather than the person to run ops hiring because it would require significant ramp up"],
+  "do_next": ["transition Rohan to own ops hiring", "I just scheduled the meeting to set a timeline for this transition to ideally happen asap"]
+}
+
+Your response must be a structured JSON object that strictly adheres to the provided schema.`,
+  canceled: `You are a formatting expert. Your task is to classify the user-provided text into one category: 'why_not'.
+
+### Rules
+1. Extract only the user's response to the question "Why not?"
+2. Do not alter the user's text
+   return it exactly as provided.
+3. Ignore any HTML tags
+   extract only the meaningful text.
+4. The response must strictly follow the provided JSON schema.
+
+### Examples
+Input 1: "<ul><li><p>Why not?</p><ul><li><p>Goal was to get current customers to be paying users so I misunderstood the assignment, not a priority.</p></li></ul></li></ul>"
+Output 1: {"why_not": ["Goal was to get current customers to be paying users so I misunderstood the assignment, not a priority."]}
+
+Input 2: "<ul><li><p>Why not?</p><ul><li><p>Will generate email drafts in Matt's inbox during the week of.</p></li></ul></li></ul>"
+Output 2: {"why_not": ["Will generate email drafts in Matt's inbox during the week of."]}
+
+Input 3: "time has passed. same reason"
+Output 3: {"why_not": ["time has passed. same reason"]}
+
+Your response must be a structured JSON object that strictly adheres to the provided schema.`
 };
 
 // JSON schema mappings for each status
