@@ -181,7 +181,7 @@ function formatHTML(template, data) {
 }
 
 // OpenAI API integration
-async function callOpenAI(systemMessage, userText, jsonSchema) {
+async function callOpenAI(systemMessage, userText, jsonSchema, env) {
 	const payload = {
 		model: 'gpt-4o-mini',
 		messages: [
@@ -208,8 +208,7 @@ async function callOpenAI(systemMessage, userText, jsonSchema) {
 	};
 
 	try {
-		// console.log('Sending payload to AI Gateway:', JSON.stringify(payload, null, 2));
-		console.log('API_GATEWAY_URL', env);
+		console.log('Sending payload to AI Gateway:', JSON.stringify(payload, null, 2));
 
 		const response = await fetch(env.API_GATEWAY_URL, {
 			method: 'POST',
