@@ -181,7 +181,7 @@ function formatHTML(template, data) {
 }
 
 // OpenAI API integration
-async function callOpenAI(systemMessage, userText, jsonSchema, openaiToken) {
+async function callOpenAI(systemMessage, userText, jsonSchema) {
 	const payload = {
 		model: 'gpt-4o-mini',
 		messages: [
@@ -208,14 +208,14 @@ async function callOpenAI(systemMessage, userText, jsonSchema, openaiToken) {
 	};
 
 	try {
-		console.log('Sending payload to AI Gateway:', JSON.stringify(payload, null, 2));
-		console.log('API_GATEWAY_URL', env.API_GATEWAY_URL);
+		// console.log('Sending payload to AI Gateway:', JSON.stringify(payload, null, 2));
+		console.log('API_GATEWAY_URL', env);
 
 		const response = await fetch(env.API_GATEWAY_URL, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
-				Authorization: `Bearer ${openaiToken}`,
+				Authorization: `Bearer ${env.OPENAI_API_KEY}`,
 				'cf-aig-authorization': `Bearer ${env.CF_AI_BEARER_TOKEN}`,
 			},
 			body: JSON.stringify(payload),
@@ -331,7 +331,7 @@ export default {
 				const template = HTML_TEMPLATES[body.status];
 
 				// Call OpenAI API with both tokens
-				const aiResponse = await callOpenAI(systemMessage, body.text, jsonSchema, env.OPENAI_API_KEY);
+				const aiResponse = await callOpenAI(systemMessage, body.text, jsonSchema, env);
 
 				// Format the HTML using the template and AI response
 				const formattedHtml = formatHTML(template, aiResponse);
